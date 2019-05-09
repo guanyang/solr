@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="zs" version="1.5">
+   <field name="_version_" type="long" indexed="true" stored="true"/>
+
+   <field name="_root_" type="string" indexed="true" stored="false"/>
+
+   <!-- id --> 
+   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
+   
+   <!-- 商品所属账号 -->
+   <field name="custNo" type="string" indexed="true" stored="true"/>
+   
+   <!-- 商品库存  格式为{city_code}_0 无货 {city_code}_1 有货 -->
+   <field name="inventory" type="string" indexed="true" stored="true" multiValued="true"/>
+   <!-- 第三层展示目录 -->
+   <field name="categoryId" type="string" indexed="true" stored="true"/>
+   <field name="categoryName" type="text_ik" indexed="true" stored="true"/>
+   
+   <!-- 第二层展示目录 -->
+   <field name="parentCategoryId" type="string" indexed="true" stored="true"/>
+   <field name="parentCategoryName" type="text_ik" indexed="true" stored="true"/>
+   
+   <!-- 品牌 -->
+   <field name="brandId" type="string" indexed="true" stored="true"/>
+   <field name="brandName" type="text_ik" indexed="true" stored="true"/>
+   <!-- 商品编码 -->
+   <field name="partNumber" type="string" indexed="true" stored="true"/>
+   <!-- 商品名称 -->
+   <field name="cmmdtyName" type="text_ik" indexed="true" stored="true"/>
+   
+   <!-- 易购价,价格区间使用 --> 
+   <field name="zsPrice" type="double" indexed="true" stored="true"/>
+
+   <!-- 品类编码 -->
+   <field name="categoryCode" type="string" indexed="false" stored="true"/>
+   
+   <!--是否是套餐商品子商品标识 -->
+   <field name="subItemFlag" type="string" indexed="false" stored="true"/>
+   
+    <!--套餐商品编码 -->
+   <field name="packagePartNumber" type="string" indexed="false" stored="true" multiValued="true"/>
+   
+   <!--商品类型 -->
+   <field name="cmmdtyType" type="string" indexed="false" stored="true"/>
+   
+      <!--供应商编码-->
+   <field name="supplierCode" type="string" indexed="true" stored="true"/>
+   
+   <!--供应商名称 -->
+   <field name="supplierName" type="string" indexed="false" stored="true"/>
+
+    <!-- 商品综合评分 -->
+    <field name="productScore" type="double" indexed="true" stored="true"/>
+   
+   <field name="text" type="text_general" indexed="true" stored="false" multiValued="true"/>
+
+	 <!-- 动态参数，字符类型 -->
+	 <dynamicField name="a_*" type="string" indexed="true" stored="true" multiValued="true"/>
+	 
+	 <!-- 动态参数，数字类型 -->
+	 <dynamicField name="d_*" type="double" indexed="true" stored="true" multiValued="true"/>
+
+ 	 <uniqueKey>id</uniqueKey>
+
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+
+    <!-- boolean type: "true" or "false" -->
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+
+   
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+
+
+    <fieldType name="tint" class="solr.TrieIntField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tfloat" class="solr.TrieFloatField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tlong" class="solr.TrieLongField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tdouble" class="solr.TrieDoubleField" precisionStep="8" positionIncrementGap="0"/>
+
+    
+    <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+
+    <!-- A Trie based date field for faster date range queries and date faceting. -->
+    <fieldType name="tdate" class="solr.TrieDateField" precisionStep="6" positionIncrementGap="0"/>
+
+
+    <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
+    <fieldtype name="binary" class="solr.BinaryField"/>
+
+    
+    <fieldType name="random" class="solr.RandomSortField" indexed="true" />
+
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <!-- in this example, we will only use synonyms at query time
+        <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+        -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+  
+  <fieldType name="text_ik" class="solr.TextField">
+	  <analyzer type="index">
+		  <tokenizer class="org.wltea.analyzer.solr.IKTokenizerFactory" useSmart="true"/>
+		  <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true"/>
+		  <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+		  <filter class="solr.LowerCaseFilterFactory"/>
+	  </analyzer>
+	  <analyzer type="query">
+		  <tokenizer class="org.wltea.analyzer.solr.IKTokenizerFactory" useSmart="true"/>
+		  <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true"/>
+		  <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+		  <filter class="solr.LowerCaseFilterFactory"/>
+	  </analyzer>
+	</fieldType>
+	
+		<solrQueryParser defaultOperator="AND"/>
+		
+</schema>
